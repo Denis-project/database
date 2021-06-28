@@ -1,0 +1,259 @@
+
+#include "Functions.h"
+
+void DataEntry(Data* (&d), int& n)
+{
+	cout << "Введите количество данных: ";
+	cin >> n;
+
+	//выделим память
+	d = new Data[n];
+
+	for (int i = 0; i < n; i++) {
+		cout << "Введите ФИО: ";
+		cin >> d[i]._initial.surname;
+		cin >> d[i]._initial.patronymic;
+		cin >> d[i]._initial.name;
+
+		cout << "Введите дату: ";
+		cin >> d[i]._date.day;
+		cin >> d[i]._date.month;
+		cin >> d[i]._date.year;
+
+		cout << "Введите адрес: ";
+		cin >> d[i]._address.city;
+		cin >> d[i]._address.home;
+
+		cout << "______________________________" << endl;
+	}
+}
+
+void ReadingData(Data* (&d), int& n, string filName)
+{
+	ifstream readig(filName);
+
+	if (readig) {
+
+		readig >> n;
+
+		//выделим память
+		d = new Data[n];
+
+		for (int i = 0; i < n; i++) {
+			cout << "Введите ФИО: ";
+			readig >> d[i]._initial.surname;
+			readig >> d[i]._initial.patronymic;
+			readig >> d[i]._initial.name;
+
+			cout << "Введите дату: ";
+			readig >> d[i]._date.day;
+			readig >> d[i]._date.month;
+			readig >> d[i]._date.year;
+
+			cout << "Введите адрес: ";
+			readig >> d[i]._address.city;
+			readig >> d[i]._address.home;
+
+			cout << "Данные считаны!" << endl;
+		}
+	}
+	else
+		cout << "Ошибка открытия файла!" << endl;
+
+	readig.close();
+}
+
+void Print(Data* d, int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		cout << "Данные №" << i + i << ":" << endl;
+
+		cout << "ФИО: " << d[i]._initial.surname << " " << d[i]._initial.name << " " << d[i]._initial.patronymic << endl;
+		cout << "ФИО: " << d[i]._date.day << " " << d[i]._date.month << " " << d[i]._date.year	 << endl;
+		cout << "ФИО: " << d[i]._address.city << " " << d[i]._address.home << endl;
+
+		cout << "______________________________" << endl;
+	}
+}
+
+void DataChange(Data* (&d), int n)
+{
+	int _n;
+	cout << "Введите номер элемента (0т 1 до " << n << "): ";
+	cin >> _n;
+	_n--;
+
+	system("cls");
+
+	if (_n >= 0 && _n < n) {
+		cout << "Введите ФИО: ";
+		cin >> d[_n]._initial.surname;
+		cin >> d[_n]._initial.patronymic;
+		cin >> d[_n]._initial.name;
+
+		cout << "Введите дату: ";
+		cin >> d[_n]._date.day;
+		cin >> d[_n]._date.month;
+		cin >> d[_n]._date.year;
+
+		cout << "Введите адрес: ";
+		cin >> d[_n]._address.city;
+		cin >> d[_n]._address.home;
+
+		system("cls");
+
+		cout << "Данные изменены!" << endl;
+	}
+	else
+		cout << "Номер введен не верно!" << endl;
+}
+
+void DeleteData(Data* (&d), int& n)
+{
+	int _n;
+	cout << "Введите номер элемента (0т 1 до " << n << "): ";
+	cin >> _n;
+	_n--;
+
+	system("cls");
+
+	//проверка, что ввели правильное значение
+	if (_n >= 0 && _n < n) {
+
+		//временный массив 
+		Data* buf = new Data[n];
+
+		Copy(buf, d, n);
+
+		//выделяем новую память
+		--n;
+		d = new Data[n];
+
+		int q = 0;
+
+		//заполняем данные кроме не нужного
+		for (int i = 0; i < n; i++) {
+			if (i != _n) {
+				d[q] = buf[i];
+				++q;
+			}
+
+		}
+
+		system("cls");
+		delete[]buf;
+
+		cout << "Данные удалены!" << endl;
+	}
+	else
+		cout << "Номер введен не верно!" << endl;
+
+
+
+}
+
+void Copy(Data* (&d_n), Data* (&d_o), int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		d_n[i] = d_o[i];
+	}
+}
+
+void Copy(Data& d_n, Data& d_o)
+{
+	d_n._initial.surname = d_o._initial.surname;
+	d_n._initial.patronymic = d_o._initial.patronymic;
+	d_n._initial.name = d_o._initial.name;
+
+	d_n._date.day = d_o._date.day;
+	d_n._date.month = d_o._date.month;
+	d_n._date.year = d_o._date.year;
+
+	d_n._address.city = d_o._address.city;
+	d_n._address.home = d_o._address.home;
+
+}
+
+void AddData(Data* (&d), int& n)
+{
+	//временный массив данных
+	Data* buf;
+	buf = new Data[n];
+
+	//сохраняем данные во временный массив
+	Copy(buf, d, n);
+
+	//выделяем новую память
+	n++;
+	d = new Data[n];
+
+	//возвращаем данные 
+	Copy(d, buf, --n);
+
+	cout << "Введите ФИО: ";
+	cin >> d[n]._initial.surname >> d[n]._initial.name >> d[n]._initial.patronymic;
+
+	cout << "Введите дату: ";
+	cin >> d[n]._date.day >> d[n]._date.month >> d[n]._date.year;
+
+	cout << "Введите адрес: ";
+	cin >> d[n]._address.city >> d[n]._address.home;
+
+	system("cls");
+
+	cout << "Данные добавлены!" << endl;
+
+	delete[]buf;
+
+}
+
+void DataSorting(Data* d, int n)
+{
+	//временная переменная 
+	Data buf;
+
+	//сортировка методом пузырька 
+	for (int i = 0; i < n; i++) {
+		for (int j = i + 1; j < n; j++) {
+			if (d[i]._initial.surname > d[j]._initial.surname) {
+				Copy(buf, d[j]);
+				Copy(d[j], d[j]);
+				Copy(d[i], buf);
+			}
+		}
+	}
+
+	cout << "Данные отсартированны!" << endl;
+}
+
+void SavingData(Data* d, int n, string filName)
+{
+	ofstream record(filName, ios::out);
+
+	if (record) {
+		record << n << endl;
+
+		for (int i = 0; i < n; i++)
+		{
+			record << d[i]._initial.surname << endl;
+			record << d[i]._initial.name << endl;
+			record << d[i]._initial.patronymic << endl;
+
+			record << d[i]._date.day << " ";
+			record << d[i]._date.month << " ";
+			record << d[i]._date.year << " ";
+
+			record << d[i]._address.city << " ";
+			if (i < n - 1)
+				record << d[i]._address.home << endl;
+			else
+				record << d[i]._address.home;
+		}
+	}
+	else
+		cout << "Ошибка открытия файла!" << endl;
+
+	record.close();
+}
